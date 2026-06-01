@@ -24,7 +24,7 @@
         </p>
         <div class="hero-actions">
             <a href="{{ url_for('register') }}" class="btn-primary">Create free account</a>
-            <a href="#" class="btn-dark">See how it works</a>
+            <a href="#" class="btn-dark" id="howItWorksBtn">See how it works</a>
         </div>
     </div>
 
@@ -96,4 +96,61 @@
     </div>
 </section>
 
+<div class="modal-overlay" id="videoModal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="How Spendly works">
+        <button class="modal-close" id="modalClose" aria-label="Close video">&times;</button>
+        <div class="modal-video">
+            <iframe id="modalIframe"
+                    title="How Spendly works"
+                    src="about:blank"
+                    allow="autoplay; encrypted-media; picture-in-picture"
+                    allowfullscreen></iframe>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function () {
+    var openBtn  = document.getElementById('howItWorksBtn');
+    var modal    = document.getElementById('videoModal');
+    var closeBtn = document.getElementById('modalClose');
+    var iframe   = document.getElementById('modalIframe');
+
+    // Placeholder video — replace the ID with the real one later.
+    var videoUrl = 'https://www.youtube.com/embed/dQw4w9WgXcQ';
+
+    function openModal(e) {
+        if (e) e.preventDefault();
+        iframe.src = videoUrl + '?autoplay=1&rel=0';
+        modal.classList.add('is-open');
+        modal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+        modal.classList.remove('is-open');
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        // Pointing the iframe at about:blank tears down the YouTube
+        // player so the video stops instead of playing in the background.
+        iframe.src = 'about:blank';
+    }
+
+    if (openBtn)  openBtn.addEventListener('click', openModal);
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+
+    // Click on the dark overlay (outside the modal box) closes it.
+    modal.addEventListener('click', function (e) {
+        if (e.target === modal) closeModal();
+    });
+
+    // Escape key also closes it.
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && modal.classList.contains('is-open')) closeModal();
+    });
+})();
+</script>
 {% endblock %}
