@@ -1,0 +1,292 @@
+/* ------------------------------------------------------------------ */
+/* Profile page                                                        */
+/* ------------------------------------------------------------------ */
+
+.profile {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 3rem 2rem 4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Shared surface recipe (mirrors .mock-card / .auth-card) */
+.profile-card,
+.stat-card,
+.panel {
+    background: var(--paper-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+/* Lucide icons render as <svg>; keep them sized and aligned with text. */
+.profile svg {
+    width: 1em;
+    height: 1em;
+    stroke-width: 2;
+    vertical-align: -0.125em;
+}
+
+/* ------------------------------------------------------------------ */
+/* 1. User info card                                                   */
+/* ------------------------------------------------------------------ */
+
+.profile-card {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 2rem;
+}
+
+.profile-avatar {
+    flex-shrink: 0;
+    width: 72px;
+    height: 72px;
+    border-radius: 999px;
+    background: var(--accent-light);
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-size: 1.75rem;
+    letter-spacing: 0.02em;
+}
+
+.profile-name {
+    font-family: var(--font-display);
+    font-size: 1.75rem;
+    line-height: 1.2;
+    color: var(--ink);
+    margin-bottom: 0.35rem;
+}
+
+.profile-email,
+.profile-since {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.9rem;
+    color: var(--ink-muted);
+}
+
+.profile-email svg,
+.profile-since svg {
+    color: var(--ink-faint);
+}
+
+/* ------------------------------------------------------------------ */
+/* 2. Summary stats row                                                */
+/* ------------------------------------------------------------------ */
+
+.stat-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+}
+
+.stat-card {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.stat-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-sm);
+    background: var(--accent-light);
+    color: var(--accent);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+}
+
+.stat-icon svg {
+    width: 20px;
+    height: 20px;
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink-muted);
+}
+
+.stat-value {
+    font-family: var(--font-display);
+    font-size: 1.75rem;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+}
+
+/* ------------------------------------------------------------------ */
+/* Two-column layout: transactions + category breakdown               */
+/* ------------------------------------------------------------------ */
+
+.profile-grid {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    gap: 1.5rem;
+    align-items: start;
+}
+
+.panel {
+    padding: 1.75rem;
+}
+
+.panel-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    color: var(--ink);
+    margin-bottom: 1.25rem;
+}
+
+.panel-title svg {
+    color: var(--accent);
+}
+
+/* ------------------------------------------------------------------ */
+/* 3. Transaction history table                                        */
+/* ------------------------------------------------------------------ */
+
+.tx-scroll { overflow-x: auto; }
+
+.tx-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.tx-table th {
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink-faint);
+    padding: 0 0.75rem 0.75rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.tx-table td {
+    padding: 0.85rem 0.75rem;
+    border-bottom: 1px solid var(--border-soft);
+    color: var(--ink-soft);
+}
+
+.tx-table tbody tr:last-child td { border-bottom: none; }
+.tx-table tbody tr { transition: background 0.15s; }
+.tx-table tbody tr:hover { background: var(--paper-warm); }
+
+.tx-date {
+    color: var(--ink-muted);
+    white-space: nowrap;
+}
+
+.tx-amount-col { text-align: right; }
+
+.tx-amount {
+    text-align: right;
+    font-weight: 600;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+/* ------------------------------------------------------------------ */
+/* Category badges (class-driven colour — never inline)                */
+/* ------------------------------------------------------------------ */
+
+.cat-badge {
+    display: inline-block;
+    padding: 0.2rem 0.65rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: var(--paper-warm);
+    color: var(--ink-soft);
+}
+
+.cat-food          { background: var(--accent-light);   color: var(--accent); }
+.cat-bills         { background: var(--accent-2-light); color: var(--accent-2); }
+.cat-health        { background: var(--danger-light);   color: var(--danger); }
+.cat-transport     { background: var(--accent-light);   color: var(--accent); }
+.cat-shopping      { background: var(--accent-2-light); color: var(--accent-2); }
+.cat-entertainment { background: var(--accent-light);   color: var(--accent); }
+.cat-other         { background: var(--paper-warm);     color: var(--ink-muted); }
+
+/* ------------------------------------------------------------------ */
+/* 4. Category breakdown bars                                          */
+/* ------------------------------------------------------------------ */
+
+.cat-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+}
+
+.cat-row-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.45rem;
+}
+
+.cat-name {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--ink-soft);
+}
+
+.cat-amount {
+    font-size: 0.85rem;
+    color: var(--ink-muted);
+    font-variant-numeric: tabular-nums;
+}
+
+.cat-bar-track {
+    height: 8px;
+    background: var(--border-soft);
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.cat-bar {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 999px;
+    transition: width 0.6s ease;
+}
+
+.cat-bar-bills         { background: var(--accent-2); }
+.cat-bar-shopping      { background: var(--accent-2); }
+.cat-bar-health        { background: var(--danger); }
+.cat-bar-other         { background: var(--ink-faint); }
+
+/* ------------------------------------------------------------------ */
+/* Responsive                                                          */
+/* ------------------------------------------------------------------ */
+
+@media (max-width: 900px) {
+    .profile-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+    .stat-row { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 600px) {
+    .profile { padding: 2rem 1rem 3rem; }
+    .profile-card { flex-direction: column; text-align: center; }
+    .profile-email, .profile-since { justify-content: center; }
+}

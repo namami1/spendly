@@ -20,6 +20,7 @@
             </a>
             <div class="nav-links">
                 {% if session.get('user_id') %}
+                <a href="{{ url_for('profile') }}" class="nav-user">{{ session.get('user_name') }}</a>
                 <a href="{{ url_for('logout') }}">Log out</a>
                 {% else %}
                 <a href="{{ url_for('login') }}">Sign in</a>
@@ -43,6 +44,7 @@
         </div>
     </footer>
 
+    <script src="https://unpkg.com/lucide@latest"></script>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     {% block scripts %}{% endblock %}
 </body>

@@ -103,6 +103,11 @@ a { color: inherit; text-decoration: none; }
 .nav-links a { color: var(--ink-muted); transition: color 0.2s; }
 .nav-links a:hover { color: var(--ink); }
 
+.nav-user {
+    font-weight: 600;
+    color: var(--ink) !important;
+}
+
 .nav-cta {
     background: var(--ink) !important;
     color: var(--paper) !important;
