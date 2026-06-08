@@ -1,5 +1,5 @@
 ---
-description: Create a spec file and feature branch for the next Spendly step
+description: Create a spec file for the next Spendly step
 argument-hint: "Step number and feature name e.g. 2 registration"
 allowed-tools: Read, Write, Glob, Bash(git:*)
 ---
@@ -35,7 +35,7 @@ From $ARGUMENTS extract:
 If you cannot infer these from $ARGUMENTS, ask the user
 to clarify before proceeding.
 
-## Step 3 — Check branch name is not taken
+<!-- ## Step 3 — Check branch name is not taken
 Run `git branch` to list existing branches.
 
 ## Step 4 — Switch to main and pull latest
@@ -44,7 +44,7 @@ Run:
 git pull origin feature
 ```
 
-## Step 5 — Create and switch to the feature branch
+## Step 5 — Create and switch to the feature branch -->
 
 
 ## Step 6 — Research the codebase
