@@ -29,7 +29,7 @@
         <div class="stat-card">
             <span class="stat-icon"><i data-lucide="dollar-sign"></i></span>
             <span class="stat-label">Total spent</span>
-            <span class="stat-value">${{ '%.2f'|format(stats.total_spent) }}</span>
+            <span class="stat-value">₹{{ '%.2f'|format(stats.total_spent) }}</span>
         </div>
         <div class="stat-card">
             <span class="stat-icon"><i data-lucide="receipt"></i></span>
@@ -68,7 +68,7 @@
                             <td>
                                 <span class="cat-badge cat-{{ tx.category|lower }}">{{ tx.category }}</span>
                             </td>
-                            <td class="tx-amount">${{ '%.2f'|format(tx.amount) }}</td>
+                            <td class="tx-amount">₹{{ '%.2f'|format(tx.amount) }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -86,7 +86,7 @@
                 <div class="cat-row">
                     <div class="cat-row-head">
                         <span class="cat-name">{{ cat.name }}</span>
-                        <span class="cat-amount">${{ '%.2f'|format(cat.amount) }}</span>
+                        <span class="cat-amount">₹{{ '%.2f'|format(cat.amount) }}</span>
                     </div>
                     <div class="cat-bar-track">
                         <div class="cat-bar cat-bar-{{ cat.name|lower }}" style="width: {{ cat.pct }}%"></div>

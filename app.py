@@ -5,6 +5,12 @@ from flask import Flask, redirect, render_template, request, session, url_for
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from database.db import get_db, init_db, seed_db
+from database.queries import (
+    get_category_breakdown,
+    get_recent_transactions,
+    get_summary_stats,
+    get_user_by_id,
+)
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "dev-secret-change-me")
@@ -108,51 +114,25 @@ def logout():
 
 @app.route("/profile")
 def profile():
-    # Step 4 builds the profile UI with static, hardcoded data. The real DB
-    # queries land in Step 5 — for now everything below is placeholder content.
     if not session.get("user_id"):
         return redirect(url_for("login"))
 
-    user = {
-        "name": session.get("user_name", "Demo User"),
-        "email": "demo@spendly.com",
-        "initials": "DU",
-        "member_since": "January 2026",
-    }
+    user_id = session["user_id"]
+    user = get_user_by_id(user_id)
+    if user is None:
+        # Stale session — the user row no longer exists. Sign out and bounce.
+        session.clear()
+        return redirect(url_for("login"))
 
-    stats = {
-        "total_spent": 349.64,
-        "transaction_count": 8,
-        "top_category": "Bills",
-    }
-
-    transactions = [
-        {"date": "Jun 15", "description": "Coffee and snacks", "category": "Food", "amount": 8.40},
-        {"date": "Jun 13", "description": "Gift", "category": "Other", "amount": 25.00},
-        {"date": "Jun 11", "description": "New shoes", "category": "Shopping", "amount": 89.99},
-        {"date": "Jun 09", "description": "Movie ticket", "category": "Entertainment", "amount": 18.75},
-        {"date": "Jun 07", "description": "Pharmacy", "category": "Health", "amount": 30.00},
-        {"date": "Jun 05", "description": "Electricity bill", "category": "Bills", "amount": 120.00},
-        {"date": "Jun 03", "description": "Monthly metro pass", "category": "Transport", "amount": 45.00},
-        {"date": "Jun 02", "description": "Lunch at cafe", "category": "Food", "amount": 12.50},
-    ]
-
-    categories = [
-        {"name": "Bills", "amount": 120.00, "pct": 34},
-        {"name": "Shopping", "amount": 89.99, "pct": 26},
-        {"name": "Transport", "amount": 45.00, "pct": 13},
-        {"name": "Health", "amount": 30.00, "pct": 9},
-        {"name": "Other", "amount": 25.00, "pct": 7},
-        {"name": "Food", "amount": 20.90, "pct": 6},
-        {"name": "Entertainment", "amount": 18.75, "pct": 5},
-    ]
+    parts = user["name"].split()
+    user = {**user, "initials": "".join(word[0] for word in parts[:2]).upper()}
 
     return render_template(
         "profile.html",
         user=user,
-        stats=stats,
-        transactions=transactions,
-        categories=categories,
+        stats=get_summary_stats(user_id),
+        transactions=get_recent_transactions(user_id),
+        categories=get_category_breakdown(user_id),
     )
 
 
