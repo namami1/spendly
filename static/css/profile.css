@@ -14,7 +14,8 @@
 /* Shared surface recipe (mirrors .mock-card / .auth-card) */
 .profile-card,
 .stat-card,
-.panel {
+.panel,
+.filter-bar {
     background: var(--paper-card);
     border: 1px solid var(--border);
     border-radius: var(--radius-md);
@@ -76,6 +77,99 @@
 .profile-since svg {
     color: var(--ink-faint);
 }
+
+/* ------------------------------------------------------------------ */
+/* Date-range filter bar                                               */
+/* ------------------------------------------------------------------ */
+
+.filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+}
+
+.filter-presets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.filter-preset {
+    padding: 0.4rem 0.85rem;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--paper-warm);
+    color: var(--ink-muted);
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.filter-preset:hover {
+    color: var(--ink);
+    border-color: var(--ink-faint);
+}
+
+.filter-preset.is-active {
+    background: var(--accent-light);
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.filter-custom {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.75rem;
+}
+
+.filter-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink-faint);
+}
+
+.filter-field input {
+    padding: 0.4rem 0.55rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--paper-card);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+}
+
+.filter-field input:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.filter-custom.is-active .filter-field input {
+    border-color: var(--accent);
+}
+
+.filter-apply {
+    padding: 0.45rem 1rem;
+    border: none;
+    border-radius: var(--radius-sm);
+    background: var(--accent);
+    color: var(--paper-card);
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s;
+}
+
+.filter-apply:hover { opacity: 0.9; }
 
 /* ------------------------------------------------------------------ */
 /* 2. Summary stats row                                                */
@@ -289,4 +383,6 @@
     .profile { padding: 2rem 1rem 3rem; }
     .profile-card { flex-direction: column; text-align: center; }
     .profile-email, .profile-since { justify-content: center; }
+    .filter-bar { flex-direction: column; align-items: stretch; }
+    .filter-custom { flex-wrap: wrap; }
 }

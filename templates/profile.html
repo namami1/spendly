@@ -24,6 +24,28 @@
         </div>
     </div>
 
+    <!-- Date-range filter bar -->
+    <div class="filter-bar">
+        <div class="filter-presets">
+            {% for preset in presets %}
+            <a class="filter-preset {% if active_preset == preset.key %}is-active{% endif %}"
+               href="{{ preset.href }}">{{ preset.label }}</a>
+            {% endfor %}
+        </div>
+        <form class="filter-custom {% if active_preset == 'custom' %}is-active{% endif %}"
+              method="get" action="{{ url_for('profile') }}">
+            <label class="filter-field">
+                <span>From</span>
+                <input type="date" name="date_from" value="{{ date_from or '' }}">
+            </label>
+            <label class="filter-field">
+                <span>To</span>
+                <input type="date" name="date_to" value="{{ date_to or '' }}">
+            </label>
+            <button type="submit" class="filter-apply">Apply</button>
+        </form>
+    </div>
+
     <!-- 2. Summary stats row -->
     <div class="stat-row">
         <div class="stat-card">

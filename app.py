@@ -1,7 +1,17 @@
+import calendar
 import os
 import sqlite3
+from datetime import date, datetime
 
-from flask import Flask, redirect, render_template, request, session, url_for
+from flask import (
+    Flask,
+    flash,
+    redirect,
+    render_template,
+    request,
+    session,
+    url_for,
+)
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from database.db import get_db, init_db, seed_db
@@ -15,10 +25,76 @@ from database.queries import (
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "dev-secret-change-me")
 
+# User-facing message when a custom date range is reversed (date_from > date_to).
+DATE_RANGE_ERROR = "Start date must be before end date."
+
 # Ensure the database exists and is seeded before handling requests.
 with app.app_context():
     init_db()
     seed_db()
+
+
+# ------------------------------------------------------------------ #
+# Date-filter helpers (profile page, Step 6)                          #
+# ------------------------------------------------------------------ #
+
+def _parse_iso(value):
+    """Return `value` if it is a well-formed YYYY-MM-DD date, else None."""
+    if not value or len(value) != 10:  # "YYYY-MM-DD" is exactly 10 chars
+        return None
+    try:
+        datetime.strptime(value, "%Y-%m-%d")
+    except ValueError:
+        return None
+    return value
+
+
+def _months_ago(today, months):
+    """Return the date `months` calendar months before `today`.
+
+    The day is clamped to the last valid day of the target month (e.g. three
+    months before 31 May is 28/29 Feb), avoiding any dateutil dependency.
+    """
+    month_index = today.year * 12 + (today.month - 1) - months
+    year, month = divmod(month_index, 12)
+    month += 1
+    last_day = calendar.monthrange(year, month)[1]
+    return date(year, month, min(today.day, last_day))
+
+
+def _preset(key, label, date_from, date_to):
+    """Build one preset dict, including a ready-made href.
+
+    Bounds are carried so the route can match the active preset; the href is
+    built here (with url_for) so the template stays a single anchor and never
+    needs to know the "no bounds means clean /profile URL" contract.
+    """
+    if date_from and date_to:
+        href = url_for("profile", date_from=date_from, date_to=date_to)
+    else:
+        href = url_for("profile")
+    return {
+        "key": key,
+        "label": label,
+        "date_from": date_from,
+        "date_to": date_to,
+        "href": href,
+    }
+
+
+def _build_presets(today):
+    """Quick-select ranges, computed here (never in the template).
+
+    "All Time" carries no bounds so its link is a clean /profile URL.
+    """
+    iso = "%Y-%m-%d"
+    today_iso = today.strftime(iso)
+    return [
+        _preset("this_month", "This Month", today.replace(day=1).strftime(iso), today_iso),
+        _preset("last_3", "Last 3 Months", _months_ago(today, 3).strftime(iso), today_iso),
+        _preset("last_6", "Last 6 Months", _months_ago(today, 6).strftime(iso), today_iso),
+        _preset("all", "All Time", None, None),
+    ]
 
 
 # ------------------------------------------------------------------ #
@@ -127,12 +203,34 @@ def profile():
     parts = user["name"].split()
     user = {**user, "initials": "".join(word[0] for word in parts[:2]).upper()}
 
+    # Optional date-range filter from the query string. Malformed values are
+    # treated as absent so the page never errors out (falls back to All Time).
+    date_from = _parse_iso(request.args.get("date_from"))
+    date_to = _parse_iso(request.args.get("date_to"))
+    if date_from and date_to and date_from > date_to:
+        flash(DATE_RANGE_ERROR)
+        date_from = date_to = None
+
+    presets = _build_presets(date.today())
+    if date_from and date_to:
+        active_preset = next(
+            (p["key"] for p in presets
+             if p["date_from"] == date_from and p["date_to"] == date_to),
+            "custom",
+        )
+    else:
+        active_preset = "all"
+
     return render_template(
         "profile.html",
         user=user,
-        stats=get_summary_stats(user_id),
-        transactions=get_recent_transactions(user_id),
-        categories=get_category_breakdown(user_id),
+        stats=get_summary_stats(user_id, date_from=date_from, date_to=date_to),
+        transactions=get_recent_transactions(user_id, date_from=date_from, date_to=date_to),
+        categories=get_category_breakdown(user_id, date_from=date_from, date_to=date_to),
+        presets=presets,
+        active_preset=active_preset,
+        date_from=date_from,
+        date_to=date_to,
     )
 
 
