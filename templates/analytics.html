@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Analytics — Spendly{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/analytics.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<section class="coming-soon">
+
+    <!-- Decorative background blobs -->
+    <span class="cs-blob cs-blob-tl"></span>
+    <span class="cs-blob cs-blob-br"></span>
+
+    <div class="cs-card">
+
+        <!-- Decorative corner accents -->
+        <span class="cs-corner cs-corner-tr"></span>
+        <span class="cs-corner cs-corner-bl"></span>
+
+        <!-- Icon with glow -->
+        <div class="cs-icon-wrap">
+            <span class="cs-icon-glow"></span>
+            <div class="cs-icon">
+                <i data-lucide="clock"></i>
+            </div>
+        </div>
+
+        <!-- Badge -->
+        <span class="cs-badge">Coming Soon</span>
+
+        <!-- Title -->
+        <h1 class="cs-title">Advanced Analytics</h1>
+
+        <!-- Description -->
+        <p class="cs-desc">
+            We're working on powerful insights and visualizations to help you
+            understand your spending patterns better.
+        </p>
+
+        <!-- Animated progress indicator -->
+        <div class="cs-progress">
+            <div class="cs-dots">
+                <span class="cs-dot"></span>
+                <span class="cs-dot"></span>
+                <span class="cs-dot"></span>
+            </div>
+            <p class="cs-progress-text">We're crafting something special</p>
+        </div>
+
+        <!-- Decorative bottom line -->
+        <span class="cs-bottom-line"></span>
+
+    </div>
+
+</section>
+
+{% endblock %}

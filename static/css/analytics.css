@@ -1,0 +1,217 @@
+/* ------------------------------------------------------------------ */
+/* Analytics — "Coming Soon" page                                      */
+/* Mirrors the Figma Coming Soon wireframe, mapped onto Spendly tokens. */
+/* ------------------------------------------------------------------ */
+
+/* A slightly darker shade of --accent for the gradients in the design. */
+:root {
+    --accent-deep: #0f2c1a;
+}
+
+.coming-soon {
+    position: relative;
+    overflow: hidden;
+    min-height: calc(100vh - 60px - 100px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    background: linear-gradient(135deg, var(--paper) 0%, #fafafa 55%, var(--paper-warm) 100%);
+}
+
+/* ----- Decorative background blobs ----- */
+
+.cs-blob {
+    position: absolute;
+    width: 24rem;
+    height: 24rem;
+    background: var(--accent);
+    opacity: 0.05;
+    border-radius: 999px;
+    filter: blur(64px);
+    pointer-events: none;
+}
+
+.cs-blob-tl { top: 0; left: 0; transform: translate(-50%, -50%); }
+.cs-blob-br { bottom: 0; right: 0; transform: translate(50%, 50%); }
+
+/* ----- Card ----- */
+
+.cs-card {
+    position: relative;
+    width: 100%;
+    max-width: 512px;
+    text-align: center;
+    background: var(--paper-card);
+    border: 1px solid var(--border-soft);
+    border-radius: 24px;
+    padding: 2.5rem;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+/* ----- Corner accents ----- */
+
+.cs-corner {
+    position: absolute;
+    width: 5rem;
+    height: 5rem;
+    opacity: 0.1;
+    pointer-events: none;
+}
+
+.cs-corner-tr {
+    top: 0;
+    right: 0;
+    background: linear-gradient(225deg, var(--accent), transparent 70%);
+    border-bottom-left-radius: 999px;
+}
+
+.cs-corner-bl {
+    bottom: 0;
+    left: 0;
+    background: linear-gradient(45deg, var(--accent), transparent 70%);
+    border-top-right-radius: 999px;
+}
+
+/* ----- Icon with glow ----- */
+
+.cs-icon-wrap {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+}
+
+.cs-icon-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 6rem;
+    height: 6rem;
+    transform: translate(-50%, -50%);
+    background: var(--accent);
+    opacity: 0.2;
+    border-radius: 999px;
+    filter: blur(20px);
+}
+
+.cs-icon {
+    position: relative;
+    width: 6rem;
+    height: 6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--accent), var(--accent-deep));
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(26, 71, 42, 0.35);
+    transition: transform 0.3s ease;
+}
+
+.cs-icon:hover { transform: scale(1.05); }
+
+.cs-icon i,
+.cs-icon svg {
+    width: 3rem;
+    height: 3rem;
+    color: #ffffff;
+    stroke-width: 2;
+}
+
+/* ----- Badge ----- */
+
+.cs-badge {
+    display: inline-block;
+    padding: 0.5rem 1.25rem;
+    margin-bottom: 1.25rem;
+    background: linear-gradient(90deg, var(--accent), #3d5a4e);
+    border-radius: 999px;
+    box-shadow: 0 4px 12px rgba(26, 71, 42, 0.25);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #ffffff;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+}
+
+/* ----- Title ----- */
+
+.cs-title {
+    font-family: var(--font-display);
+    font-size: 2.25rem;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    margin-bottom: 1rem;
+    background: linear-gradient(90deg, var(--accent), var(--accent-deep));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: var(--accent);
+}
+
+/* ----- Description ----- */
+
+.cs-desc {
+    max-width: 22rem;
+    margin: 0 auto 2rem;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: var(--ink-muted);
+}
+
+/* ----- Animated progress indicator ----- */
+
+.cs-progress { margin-top: 2rem; }
+
+.cs-dots {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    align-items: center;
+}
+
+.cs-dot {
+    width: 0.75rem;
+    height: 0.75rem;
+    background: linear-gradient(90deg, var(--accent), #3d5a4e);
+    border-radius: 999px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+    animation: cs-pulse 1.4s ease-in-out infinite;
+}
+
+.cs-dot:nth-child(2) { animation-delay: 0.2s; }
+.cs-dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes cs-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+
+.cs-progress-text {
+    margin-top: 1rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    color: var(--ink-faint);
+}
+
+/* ----- Decorative bottom line ----- */
+
+.cs-bottom-line {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 8rem;
+    height: 4px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity: 0.3;
+    border-radius: 999px;
+}
+
+/* ----- Respect reduced-motion preference ----- */
+
+@media (prefers-reduced-motion: reduce) {
+    .cs-dot { animation: none; }
+    .cs-icon { transition: none; }
+}
