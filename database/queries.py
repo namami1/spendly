@@ -36,6 +36,27 @@ def get_user_by_id(user_id):
     }
 
 
+def insert_expense(user_id, amount, category, expense_date, description):
+    """Insert one expense for the given user and return the new row id.
+
+    The connection is opened via get_db() (foreign keys on) and closed before
+    returning. All values are bound as parameters; `description` may be None,
+    which is stored as SQL NULL. `created_at` is left to the table DEFAULT.
+    (`expense_date` avoids shadowing the `datetime.date` import at module top.)
+    """
+    conn = get_db()
+    try:
+        cursor = conn.execute(
+            "INSERT INTO expenses (user_id, amount, category, date, description) "
+            "VALUES (?, ?, ?, ?, ?)",
+            (user_id, amount, category, expense_date, description),
+        )
+        conn.commit()
+        return cursor.lastrowid
+    finally:
+        conn.close()
+
+
 def _date_clause(date_from, date_to):
     """Return (sql_fragment, params) for an optional inclusive date range.
 

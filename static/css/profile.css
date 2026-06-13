@@ -249,6 +249,26 @@
     color: var(--accent);
 }
 
+/* Heading row that pairs a panel title with an action (e.g. + Add Expense). */
+.panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+}
+
+.panel-head .panel-title {
+    margin-bottom: 0;
+}
+
+/* Compact variant of .btn-primary for inline header actions. */
+.btn-sm {
+    padding: 0.4rem 0.9rem;
+    font-size: 0.8rem;
+    white-space: nowrap;
+}
+
 /* ------------------------------------------------------------------ */
 /* 3. Transaction history table                                        */
 /* ------------------------------------------------------------------ */

@@ -1,4 +1,5 @@
 import calendar
+import math
 import os
 import sqlite3
 from datetime import date, datetime
@@ -20,6 +21,7 @@ from database.queries import (
     get_recent_transactions,
     get_summary_stats,
     get_user_by_id,
+    insert_expense,
 )
 
 app = Flask(__name__)
@@ -27,6 +29,24 @@ app.secret_key = os.environ.get("SECRET_KEY", "dev-secret-change-me")
 
 # User-facing message when a custom date range is reversed (date_from > date_to).
 DATE_RANGE_ERROR = "Start date must be before end date."
+
+# The fixed set of expense categories (single source of truth: the add-expense
+# template iterates this list and the POST handler validates against it).
+EXPENSE_CATEGORIES = [
+    "Food",
+    "Transport",
+    "Bills",
+    "Health",
+    "Entertainment",
+    "Shopping",
+    "Other",
+]
+
+# Upper bound on a single expense amount (₹1 crore) — guards against absurd but
+# technically-finite floats like 1e308. Description length mirrors the template's
+# maxlength so a crafted POST can't bypass the browser-side limit.
+MAX_EXPENSE_AMOUNT = 10_000_000
+MAX_DESCRIPTION_LENGTH = 200
 
 # Ensure the database exists and is seeded before handling requests.
 with app.app_context():
@@ -241,9 +261,64 @@ def analytics():
     return render_template("analytics.html")
 
 
-@app.route("/expenses/add")
+@app.route("/expenses/add", methods=["GET", "POST"])
 def add_expense():
-    return "Add expense — coming in Step 7"
+    if not session.get("user_id"):
+        return redirect(url_for("login"))
+
+    today = date.today().isoformat()
+
+    if request.method == "POST":
+        amount_raw = request.form.get("amount", "").strip()
+        category = request.form.get("category", "").strip()
+        date_value = request.form.get("date", "").strip()
+        description = request.form.get("description", "").strip()
+
+        # Preserved verbatim so a failed submission re-fills the form.
+        values = {
+            "amount": amount_raw,
+            "category": category,
+            "date": date_value,
+            "description": description,
+        }
+
+        def reject(message):
+            return render_template(
+                "add_expense.html",
+                categories=EXPENSE_CATEGORIES,
+                values=values,
+                today=today,
+                error=message,
+            )
+
+        try:
+            amount = float(amount_raw)
+        except ValueError:
+            return reject("Amount must be a number.")
+        if not math.isfinite(amount):  # rejects inf, -inf, nan (e.g. "1e999")
+            return reject("Amount must be a number.")
+        if amount <= 0:
+            return reject("Amount must be greater than zero.")
+        if amount > MAX_EXPENSE_AMOUNT:
+            return reject("Amount is too large.")
+        if category not in EXPENSE_CATEGORIES:
+            return reject("Please choose a valid category.")
+        if _parse_iso(date_value) is None:
+            return reject("Please enter a valid date.")
+        if len(description) > MAX_DESCRIPTION_LENGTH:
+            return reject("Description must be 200 characters or fewer.")
+
+        insert_expense(
+            session["user_id"], amount, category, date_value, description or None
+        )
+        return redirect(url_for("profile"))
+
+    return render_template(
+        "add_expense.html",
+        categories=EXPENSE_CATEGORIES,
+        values={},
+        today=today,
+    )
 
 
 @app.route("/expenses/<int:id>/edit")

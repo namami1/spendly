@@ -69,9 +69,12 @@
 
         <!-- 3. Transaction history table -->
         <div class="panel tx-panel">
-            <h2 class="panel-title">
-                <i data-lucide="list"></i>Recent transactions
-            </h2>
+            <div class="panel-head">
+                <h2 class="panel-title">
+                    <i data-lucide="list"></i>Recent transactions
+                </h2>
+                <a href="{{ url_for('add_expense') }}" class="btn-primary btn-sm">+ Add Expense</a>
+            </div>
             <div class="tx-scroll">
                 <table class="tx-table">
                     <thead>
