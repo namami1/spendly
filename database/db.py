@@ -10,8 +10,14 @@ from datetime import date
 
 from werkzeug.security import generate_password_hash
 
-# Path to the SQLite file in the project root (one level up from this file).
-DB_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "expense_tracker.db")
+# Path to the SQLite file. Defaults to the project root (one level up from this
+# file) for local dev. In production (e.g. Railway) set DATABASE_PATH to a file
+# on a persistent volume — e.g. /data/expense_tracker.db — so user data survives
+# restarts and redeploys.
+DB_PATH = os.environ.get(
+    "DATABASE_PATH",
+    os.path.join(os.path.dirname(os.path.dirname(__file__)), "expense_tracker.db"),
+)
 
 
 def get_db():
