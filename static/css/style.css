@@ -451,6 +451,20 @@ a { color: inherit; text-decoration: none; }
     margin-bottom: 1.25rem;
 }
 
+/* Inline text-style danger action, sits alongside the plain-text Edit link
+   in the profile transactions "Actions" cell. */
+.btn-delete {
+    background: none;
+    border: none;
+    padding: 0;
+    margin-left: 0.75rem;
+    color: var(--danger);
+    font: inherit;
+    cursor: pointer;
+}
+
+.btn-delete:hover { text-decoration: underline; }
+
 .form-group { margin-bottom: 1.25rem; }
 
 .form-group label {

@@ -97,6 +97,25 @@ def update_expense(expense_id, user_id, amount, category, expense_date, descript
         conn.close()
 
 
+def delete_expense(expense_id, user_id):
+    """Delete one expense, scoped to its owner.
+
+    The `WHERE id = ? AND user_id = ?` clause is the ownership guard: a
+    mismatched user_id (or a non-existent id) matches no row, so nothing is
+    deleted and no error is raised. Mirrors the get_db() → try/finally pattern
+    of insert_expense / update_expense.
+    """
+    conn = get_db()
+    try:
+        conn.execute(
+            "DELETE FROM expenses WHERE id = ? AND user_id = ?",
+            (expense_id, user_id),
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+
 def _date_clause(date_from, date_to):
     """Return (sql_fragment, params) for an optional inclusive date range.
 
