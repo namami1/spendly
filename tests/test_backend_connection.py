@@ -60,7 +60,8 @@ def test_get_recent_transactions_newest_first(seeded_db):
     assert txns[1]["description"] == "Groceries"
     assert txns[-1]["date"] == "Jun 01"  # the oldest row (Transport)
 
-    assert set(txns[0]) == {"date", "description", "category", "amount"}
+    # Step 8 added "id" to the row so templates can build edit/delete links.
+    assert set(txns[0]) == {"id", "date", "description", "category", "amount"}
 
 
 def test_get_recent_transactions_no_expenses(seeded_db):

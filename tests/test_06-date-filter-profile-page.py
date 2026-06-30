@@ -633,14 +633,14 @@ class TestGetRecentTransactions:
         assert txns == []
 
     def test_row_shape_unchanged_with_filter(self, seeded_db):
-        """Each returned dict has the same keys as Step 5 ({date, description, category, amount})."""
+        """Each returned dict keeps its keys when filtered (Step 8 added 'id')."""
         txns = get_recent_transactions(
             seeded_db["user_id"],
             date_from=DATE_CURRENT_MONTH_1,
             date_to=DATE_CURRENT_MONTH_2,
         )
         for t in txns:
-            assert set(t.keys()) == {"date", "description", "category", "amount"}
+            assert set(t.keys()) == {"id", "date", "description", "category", "amount"}
 
     def test_date_display_format_unchanged_with_filter(self, seeded_db):
         """Date strings use 'Mon DD' display format (e.g. 'Jun 05') even when filtered."""

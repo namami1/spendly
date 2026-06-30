@@ -6,6 +6,7 @@ from datetime import date, datetime
 
 from flask import (
     Flask,
+    abort,
     flash,
     redirect,
     render_template,
@@ -18,10 +19,12 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from database.db import get_db, init_db, seed_db
 from database.queries import (
     get_category_breakdown,
+    get_expense_by_id,
     get_recent_transactions,
     get_summary_stats,
     get_user_by_id,
     insert_expense,
+    update_expense,
 )
 
 app = Flask(__name__)
@@ -321,9 +324,74 @@ def add_expense():
     )
 
 
-@app.route("/expenses/<int:id>/edit")
+@app.route("/expenses/<int:id>/edit", methods=["GET", "POST"])
 def edit_expense(id):
-    return "Edit expense — coming in Step 8"
+    if not session.get("user_id"):
+        return redirect(url_for("login"))
+
+    # Ownership guard: returns None for a non-existent id OR another user's
+    # expense, so both cases collapse to a 404.
+    expense = get_expense_by_id(id, session["user_id"])
+    if expense is None:
+        abort(404)
+
+    if request.method == "POST":
+        amount_raw = request.form.get("amount", "").strip()
+        category = request.form.get("category", "").strip()
+        date_value = request.form.get("date", "").strip()
+        description = request.form.get("description", "").strip()
+
+        # Preserved verbatim so a failed submission re-fills the form with the
+        # user's edits (not the original row).
+        values = {
+            "amount": amount_raw,
+            "category": category,
+            "date": date_value,
+            "description": description,
+        }
+
+        def reject(message):
+            return render_template(
+                "edit_expense.html",
+                expense=expense,
+                categories=EXPENSE_CATEGORIES,
+                values=values,
+                error=message,
+            )
+
+        try:
+            amount = float(amount_raw)
+        except ValueError:
+            return reject("Amount must be a number.")
+        if not math.isfinite(amount):  # rejects inf, -inf, nan (e.g. "1e999")
+            return reject("Amount must be a number.")
+        if amount <= 0:
+            return reject("Amount must be greater than zero.")
+        if amount > MAX_EXPENSE_AMOUNT:
+            return reject("Amount is too large.")
+        if category not in EXPENSE_CATEGORIES:
+            return reject("Please choose a valid category.")
+        if _parse_iso(date_value) is None:
+            return reject("Please enter a valid date.")
+        if len(description) > MAX_DESCRIPTION_LENGTH:
+            return reject("Description must be 200 characters or fewer.")
+
+        update_expense(
+            id, session["user_id"], amount, category, date_value, description or None
+        )
+        return redirect(url_for("profile"))
+
+    return render_template(
+        "edit_expense.html",
+        expense=expense,
+        categories=EXPENSE_CATEGORIES,
+        values={
+            "amount": expense["amount"],
+            "category": expense["category"],
+            "date": expense["date"],
+            "description": expense["description"] or "",
+        },
+    )
 
 
 @app.route("/expenses/<int:id>/delete")
